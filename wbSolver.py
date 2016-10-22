@@ -24,33 +24,37 @@ class wbSolver:
     def scanWord(self,word, pathArr):
         returnArr = []
         if len(pathArr) == 0:
-            # erster Durchlauf
-            # Suche nach dem Anfangsbuchstaben im gesamten Feld
             foundFirstChar = self.getScannedCoordsForChar(word[0])
             if foundFirstChar == []:
-                returnArr = []
+                return False
             else:
                 for foundCoord in foundFirstChar:
                     thisPath = []
                     thisPath.append(foundCoord)
-                    thisPath.append(self.scanWord(word[1:], thisPath))
-                    returnArr.append(thisPath)
+                    returnArr.append(self.scanWord(word[1:], thisPath))
         else:
             if(len(word)==0):
-                return
-            lastCoord = pathArr(len(pathArr)-1)
+                return True
+            lastCoord = pathArr[len(pathArr)-1]
             foundFirstChar = self.getCharAtAdjacentRect(lastCoord[0],lastCoord[1],word[0])
             if foundFirstChar == []:
                 return False
             for foundCoord in foundFirstChar:
                 thisPath = []
                 thisPath.append(foundCoord)
-                thisPath.append(self.scanWord(word[1:], thisPath))
-                returnArr.append(thisPath)
-            # nicht erster Durchlauf
-            # Suche nach dem nächsten Buchstaben im angrenzenden Bereich
-
+                return thisPath.append(self.scanWord(word[1:], thisPath))
         return returnArr
+
+    def getFoundWord(self,word):
+        returnArr = []
+        coordArr = wb.scanWord('lüge', [])
+        for wordSequence in coordArr:
+            if (wordSequence):
+                result = wordSequence[len(wordSequence)-1]
+                if (result == True):
+                    returnArr.append(wordSequence[0:len(wordSequence)-2])
+        return returnArr
+
     def getCharAtPos(self,col, row):
         thisRow = self.getRow(row)
         return self.getChar(thisRow,col)
@@ -103,6 +107,12 @@ class wbSolver:
             returnArr.append([col + 1, row + 1])
         return returnArr
 
+    def flatten(self,lists):
+        if lists == []:
+            return lists
+        if isinstance(lists[0],list):
+            return self.flatten(lists[0]) + self.flatten(lists[1:])
+        return lists[:1] + self.flatten(lists[1:])
 
 if __name__ == '__main__':
     fieldArr = [['d', 'd', 't', 'e', 'z', 'e', 'u'],
@@ -124,28 +134,5 @@ if __name__ == '__main__':
                       'daten']
     wb = wbSolver(fieldArr, wordArr)
     print(wb)
-    print(wb.scanWord('motiv', []))
-
-
-
-
-
-
-    #print(wb.getCharAtPos(0,1))
-    #print(wb.getRow(0))
-    #print(wb.getChar(wb.getRow(0),1))
-    #print("Scanning for non existent char")
-    #print(wb.getScannedCoordsForChar('f'))
-    #print("This should be an empty line")
-    #print(wb.getRow(-1))
-    #print("And this should also be a an empty line")
-    #print(wb.getRow(3))
-    #print("This is an empty char")
-    #print(wb.getCharAtPos(-1, -1))
-    #print(wb.getCharAtPos(3,3))
-    #print("Adjacent Char not existent")
-    #print(wb.getCharAtAdjacentRect(1,1,'f'))
-    #print(wb)
-    #print(wb.getCharAtAdjacentRect(0,1,'e'))
-    #wb.strikeOutChar(1,1)
-    #print(wb)
+    # print(wb.scanWord('lüge', []))
+    print(wb.getFoundWord('lüge'))

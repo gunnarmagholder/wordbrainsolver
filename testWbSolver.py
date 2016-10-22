@@ -48,5 +48,8 @@ class TestWbSolver(unittest.TestCase):
     def test_get_adjacent_char_invalid(self):
         self.assertEqual([],self.wb.getCharAtAdjacentRect(1,1,'f'))
 
+    def test_get_adjacen_char_valid(self):
+        self.assertEqual([[1,1],[0,2]],self.wb.getCharAtAdjacentRect(0,1,'e'))
+
 if __name__ == '__main__':
     unittest.main()
